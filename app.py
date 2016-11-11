@@ -44,7 +44,7 @@ def index():
 
 @app.route('/check_login', methods=['POST'])
 def checklogin():
-    link = '/'
+    link = 'badlog'
     uid = request.form['uid']
     checkuser = null
     cmd ="SELECT uid from users where uid=%s"
@@ -53,12 +53,19 @@ def checklogin():
         checkuser = result
         print(type(uid),type(checkuser[0]))
         if checkuser[0] == float(uid):
-            link = '/portfolio'
-    return redirect(link)
+            link = 'portfolio'
+            #portfolio(checkuser)
+    return redirect(url_for(link, uid=uid))
 
-@app.route('/portfolio')
-def portfolio():
-    cursor = g.conn.execute("SELECT * FROM stock_transactions where uid=1")
+@app.route('/incorrectlogon/<uid>')
+def badlog(uid):
+    return render_template("incorrectlogon.html", uid=uid)
+
+
+@app.route('/portfolio/<uid>')
+def portfolio(uid):
+    cmd ="SELECT * FROM stock_transactions where uid=%s"
+    cursor = g.conn.execute(cmd, uid)
     transactions = []
     for result in cursor:
         transactions.append(result)
