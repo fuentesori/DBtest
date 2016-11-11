@@ -6,13 +6,31 @@
 </head>
 <body>
 <h1>Welcome to your stock portfolio, {{user.fname}} {{user.lname}}</h1>
+
+
+<!-- <form method="get" action="/getportfolio"> -->
+<form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>'>
+  <select id="portfolio" name="option" width="300px">
+    <option selected value>  </option>
+    {% for portfolio in portfolios %}
+      <option value="{{ portfolio }}">{{ portfolio }}</option>
+    {% endfor %}
+  </select>
+  <input type="submit"/>
+</form>
 {% for transaction in transactions%}
   <li> {{transaction.ticker}} {{transaction.shares}} {{transaction.open_position_price}}  </li>
 {% endfor %}
 
+
 <form method="post" action="/post_stock">
     <label>Ticker:</label>
-    <input id="ticker" name="ticker" type="text"/>
+    <select id="ticker" name="option" width="300px">
+      <option disabled selected value>  </option>
+      {% for ticker in tickers %}
+        <option value="{{ ticker }}">{{ ticker.ticker }}</option>
+      {% endfor %}
+    </select>
     <label>Shares:</label>
     <input id="shares" name="shares" type="int"/>
     <label>Current price:</label>
@@ -24,11 +42,16 @@
 
 <form method="post" action="/post_cash">
     <label>Account:</label>
-    <input id="account" name="account" type="text"/>
+    <select id="account" name="option" width="300px">
+      <option disabled selected value>  </option>
+      {% for account in accounts %}
+        <option value="{{ account }}">{{ account }}</option>
+      {% endfor %}
+    </select>
     <label>Amount:</label>
     <input id="amount" name="amount" type="float"/> <br>
-    <input type="radio" name="order" value="In"> In<br>
-    <input type="radio" name="order" value="Out"> Out<br>
+    <input id="order" type="radio" name="order" value="In"> In<br>
+    <input id="order" type="radio" name="order" value="Out"> Out<br>
     <input type="submit"/>
 </form>
 

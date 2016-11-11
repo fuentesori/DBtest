@@ -37,7 +37,7 @@ def teardown_request(exception):
   except Exception as e:
     pass
 
-
+#login page and and handling login errors
 @app.route('/')
 def index():
     return render_template("login.html")
@@ -54,18 +54,34 @@ def checklogin():
         print(type(uid),type(checkuser[0]))
         if checkuser[0] == float(uid):
             link = 'portfolio'
-            #portfolio(checkuser)
     return redirect(url_for(link, uid=uid))
 
 @app.route('/incorrectlogon/<uid>')
 def badlog(uid):
     return render_template("incorrectlogon.html", uid=uid)
 
+#User portfolio
+
+@app.route('/portfolio/<uid>/<portfolioid>', methods=['POST'])
+def populateportfolio(uid,portfolioid):
+    print("at leat i got here")
+    uid = 1
+    #portfolioid=[]
+    #portfolioid = request.form['portfolio']
+    return redirect(url_for('portfolio', uid=uid))
 
 @app.route('/portfolio/<uid>')
 def portfolio(uid):
-    cmd ="SELECT * FROM stock_transactions where uid=%s"
+    cmd ="SELECT portfolioid FROM portfolio where uid=%s"
     cursor = g.conn.execute(cmd, uid)
+    portfolios = []
+    for result in cursor:
+        portfolios.append(result[0])
+    cursor.close()
+    portfolioid=9
+
+    cmd ="SELECT * FROM stock_transactions where uid=%s and portfolioid=%s"
+    cursor = g.conn.execute(cmd, uid, portfolioid)
     transactions = []
     for result in cursor:
         transactions.append(result)
@@ -76,13 +92,40 @@ def portfolio(uid):
     for result in cursor:
         userinfo=result
     cursor.close()
-    return render_template("portfolio.html", transactions=transactions, user=userinfo)
 
+    cmd = "SELECT ticker, current_price FROM us_stock ORDER BY ticker"
+    cursor = g.conn.execute(cmd)
+    tickers = []
+    for result in cursor:
+        tickers.append(result)
+    cursor.close()
+
+    cmd = "SELECT accountid FROM bank_accounts WHERE uid=%s ORDER BY accountid"
+    cursor = g.conn.execute(cmd,uid)
+    accounts = []
+    for result in cursor:
+        accounts.append(result[0])
+    cursor.close()
+
+    return render_template("portfolio.html", portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, accounts=accounts)
+
+
+
+
+#New User page and adding new user to database
 @app.route('/newuser')
 def newuser():
     return render_template("add_user.html")
 
 
+@app.route('/post_user', methods=['POST'])
+def post_user():
+    users = [request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
+    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5]));
+    return redirect('/newuser')
+
+#Existing user profile, view and update user data
 @app.route('/profile')
 def profile():
     cursor = g.conn.execute("SELECT * FROM users where uid=1")
@@ -93,12 +136,6 @@ def profile():
     return render_template("profile.html", names=names)
 
 
-@app.route('/post_user', methods=['POST'])
-def post_user():
-    users = [request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
-    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s)';
-    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5]));
-    return redirect('/newuser')
 
 
 
