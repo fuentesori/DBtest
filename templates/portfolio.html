@@ -5,7 +5,7 @@
     <meta charset="utf-8"/>
 </head>
 <body>
-<h1>This is the user portfolio page</h1>
+<h1>Welcome to your stock portfolio, {{user.fname}} {{user.lname}}</h1>
 {% for transaction in transactions%}
   <li> {{transaction.ticker}} {{transaction.shares}} {{transaction.open_position_price}}  </li>
 {% endfor %}
@@ -26,7 +26,7 @@
     <label>Account:</label>
     <input id="account" name="account" type="text"/>
     <label>Amount:</label>
-    <input id="amount" name="amount" type="float"/> <br>  
+    <input id="amount" name="amount" type="float"/> <br>
     <input type="radio" name="order" value="In"> In<br>
     <input type="radio" name="order" value="Out"> Out<br>
     <input type="submit"/>

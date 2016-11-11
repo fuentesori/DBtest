@@ -70,7 +70,13 @@ def portfolio(uid):
     for result in cursor:
         transactions.append(result)
     cursor.close()
-    return render_template("portfolio.html", transactions=transactions)
+    cmd = "SELECT * FROM users where uid=%s"
+    cursor = g.conn.execute(cmd,uid)
+    userinfo = []
+    for result in cursor:
+        userinfo=result
+    cursor.close()
+    return render_template("portfolio.html", transactions=transactions, user=userinfo)
 
 @app.route('/newuser')
 def newuser():
