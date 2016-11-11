@@ -65,6 +65,15 @@ def profile():
     cursor.close()
     return render_template("profile.html", names=names)
 
+
+@app.route('/post_user', methods=['POST'])
+def post_user():
+    users = [request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
+    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5]));
+    return redirect('/newuser')
+
+
 # app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:ok@localhost/4111T'
 # app.debug = True
