@@ -42,12 +42,26 @@ def teardown_request(exception):
 def index():
     return render_template("login.html")
 
+@app.route('/check_login', methods=['POST'])
+def checklogin():
+    link = '/'
+    uid = request.form['uid']
+    checkuser = null
+    cmd ="SELECT uid from users where uid=%s"
+    cursor = g.conn.execute(cmd,uid)
+    for result in cursor:
+        checkuser = result
+        print(type(uid),type(checkuser[0]))
+        if checkuser[0] == float(uid):
+            link = '/portfolio'
+    return redirect(link)
+
 @app.route('/portfolio')
 def portfolio():
     cursor = g.conn.execute("SELECT * FROM stock_transactions where uid=1")
     transactions = []
     for result in cursor:
-        transactions.append(result)  # can also be accessed using result[0]
+        transactions.append(result)
     cursor.close()
     return render_template("portfolio.html", transactions=transactions)
 
@@ -61,7 +75,7 @@ def profile():
     cursor = g.conn.execute("SELECT * FROM users where uid=1")
     names = []
     for result in cursor:
-        names=result  # can also be accessed using result[0]
+        names=result
     cursor.close()
     return render_template("profile.html", names=names)
 
@@ -74,60 +88,7 @@ def post_user():
     return redirect('/newuser')
 
 
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:ok@localhost/4111T'
-# app.debug = True
-# db = SQLAlchemy(app)
-# DATABASEURI = "postgresql://postgres:ok@localhost/4111T"
-# engine = create_engine(DATABASEURI)
-# g.conn = engine.connect()
 
-
-# class Users(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(80), unique=True)
-#     email = db.Column(db.String(120), unique=True)
-#     address = db.Column(db.String(120))
-#     phone = db.Column(db.String(9))
-#
-#     def __init__(self, username, email):
-#         self.username = username
-#         self.email = email
-#
-#     def __repr__(self):
-#         return '<User %r>' %self.username
-
-
-
-#     cursor = g.conn.execute("SELECT UID FROM Users")
-#     myUser = []
-#     for result in cursor:
-#           myUser.append(result['UID'])  # can also be accessed using result[0]
-#     cursor.close()
-#
-#
-#     # myUser = Users.query.all()
-#     # oneItem = Users.query.filter_by(UID=1).all()
-#     #return render_template('add_user.html', myUser = myUser, oneItem = oneItem)
-#     return render_template('add_user.html', myUser = myUser)
-     #return render_template('add_user.html')
-#
-# @app.route('/profile/<username>')
-# def profile(username):
-#     user = User.query.filter_by(username=username).first()
-#     return render_template('profile.html', user=user)
-#
-#
-#
-# @app.route('/post_user', methods=['POST'])
-# def post_user():
-#     user = User(request.form['username'], request.form['email'])
-#     db.session.add(user)
-#     db.session.commit()
-#     return redirect(url_for('index'))
-
-# if __name__=="__main__":
-#     app.run()
 
 
 if __name__ == "__main__":
