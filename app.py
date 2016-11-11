@@ -109,7 +109,12 @@ def portfolio(uid):
 
     return render_template("portfolio.html", portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, accounts=accounts)
 
-
+@app.route('/post_trade', methods=['POST'])
+def post_trade():
+    users = [request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
+    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6], users[7], users[8], users[9], users[10]));
+    return redirect(url_for('portfolio', uid=uid))
 
 
 #New User page and adding new user to database
@@ -117,13 +122,12 @@ def portfolio(uid):
 def newuser():
     return render_template("add_user.html")
 
-
 @app.route('/post_user', methods=['POST'])
 def post_user():
     users = [request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
     cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5]));
-    return redirect('/newuser')
+    return redirect(url_for('newuser'))
 
 #Existing user profile, view and update user data
 @app.route('/profile')

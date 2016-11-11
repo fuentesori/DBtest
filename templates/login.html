@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>This is the portfolio page</title>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+    </style>
 </head>
 <body>
+
+
   <h1> Please log in </h1>
   <form method="post" action="/check_login">
       <label>UserID:</label>
@@ -12,6 +22,10 @@
       <label>Email:</label>
       <input id="email" name="email" type="text"/>
       <input type="submit"/>
+  </form>
+
+  <form action="/newuser">
+      <input type="submit" value="Create new user"/>
   </form>
 
 
