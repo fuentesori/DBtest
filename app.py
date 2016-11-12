@@ -216,10 +216,10 @@ def post_user():
     for result in cursor:
         uid = result[0] + 1
     #fill out user data and store in database
-    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password']]
-    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s)';
-    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6]));
-    return redirect(url_for('usercreated', uid=uid))
+    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password'], request.form['email']]
+    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6], users[7]));
+    return redirect(url_for('usercreated', uid=int(uid)))
 
 #Existing user profile, view and update user data
 @app.route('/profile')
@@ -235,9 +235,9 @@ def profile():
 @app.route('/update_user', methods=['POST'])
 def update_user():
     #fill out user data and update in database
-    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password']]
-    cmd = 'UPDATE users SET (fname, lname, address, phone, ssn, password) = (%s, %s, %s, %s, %s, %s) WHERE uid=%s';
-    g.conn.execute(cmd, (users[1], users[2], users[3], users[4], users[5], users[6], users[0]));
+    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password'], request.form['email']]
+    cmd = 'UPDATE users SET (fname, lname, address, phone, ssn, password, email) = (%s, %s, %s, %s, %s, %s, %s) WHERE uid=%s';
+    g.conn.execute(cmd, (users[1], users[2], users[3], users[4], users[5], users[6], users[7], users[0]));
 
     cmd = "SELECT * FROM users where uid=%s"
     cursor = g.conn.execute(cmd,uid)
