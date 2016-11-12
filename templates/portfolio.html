@@ -45,8 +45,28 @@
         <option value="{{ portfolio }}">{{ portfolio }}</option>
       {% endfor %}
     </select>
-    <input type="submit"/>
+    <input type="submit" value="See portfolio"/>
   </form>
+
+<br>
+  <form name="newportfolio" method="post" action='/post_portfolio'>
+    <input type="submit" value="Create new portfolio"/>
+  </form>
+<br>
+  <form name="newbankaccount" method="post" action='/post_bankaccount'>
+    <label>Bank ABA number:</label>
+    <input id="aba" name="aba" type="text"/>
+    <label>Account number:</label>
+    <input id="accountnumber" name="accountnumber" type="text"/>
+    <label>Direct deposit?:</label>
+    <select id="directdeposit" name="directdeposit" width="300px">
+      <option selected disabled value>  </option>
+        <option value="true">true</option>
+        <option value="false">false</option>
+    </select>
+    <input type="submit" value="Add new bank account"/>
+  </form>
+
 </td>
 
 
@@ -69,25 +89,39 @@
 
 
 
-  <form method="post" action="/post_stock">
+  <form method="post" action="/post_trade">
+      <label>Portfolio:</label>
+      <select id="portfolio" name="portfolio" width="300px">
+        <option selected disabled value>  </option>
+        {% for portfolio in portfolios %}
+          <option value="{{ portfolio }}">{{ portfolio }}</option>
+        {% endfor %}
+      </select>
       <label>Ticker:</label>
-      <select id="ticker" name="option" width="300px">
+      <select id="ticker" name="ticker" width="300px">
         <option disabled selected value>  </option>
         {% for ticker in tickers %}
-          <option value="{{ ticker }}">{{ ticker.ticker }}</option>
+          <option value="{{ ticker.ticker }}">{{ ticker.ticker }}</option>
         {% endfor %}
       </select>
       <label>Shares:</label>
       <input id="shares" name="shares" type="int"/>
       <label>Current price:</label>
-      <input id="current_price" name="current_price" type="float"/> <br>
-      <input type="radio" name="order" value="buy"> Buy<br>
-      <input type="radio" name="order" value="sell"> Sell<br>
+      <input id="currentprice" name="currentprice" type="float"/> <br>
+      <input id="order" type="radio" name="order" value="buy">Buy<br>
+      <input id="order" type="radio" name="order" value="sell">Sell<br>
       <input type="submit" value="Execute"/>
   </form>
 
 
 <form method="post" action="/post_cash">
+  <label>Portfolio:</label>
+  <select id="portfolio" name="portfolio" width="300px">
+    <option selected disabled value>  </option>
+    {% for portfolio in portfolios %}
+      <option value="{{ portfolio }}">{{ portfolio }}</option>
+    {% endfor %}
+  </select>
     <label>Account:</label>
     <select id="bankaccountid" name="bankaccountid" width="300px">
       <option disabled selected value>  </option>

@@ -5,7 +5,8 @@ from sqlalchemy.pool import NullPool
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, redirect, url_for, render_template, g, Response
-
+global Gportfolioid
+Gportfolioid = 0
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -115,12 +116,51 @@ def portfolio(passuid, portfolioid):
 
     return render_template("portfolio.html", portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, bankaccountids=bankaccountids)
 
+@app.route('/post_portfolio', methods=['POST'])
+def post_portfolio():
+    #find biggest primary key id and increment by 1
+    cmd = 'SELECT MAX(portfolioid) FROM portfolio'
+    cursor = g.conn.execute(cmd)
+    for result in cursor:
+        portfolioid = result[0] + 1
+    portfolio = [portfolioid, uid, 0]
+    cmd = 'INSERT INTO portfolio VALUES (%s, %s, %s)';
+    g.conn.execute(cmd, (portfolio[0], portfolio[1], portfolio[2]));
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=0))
+
+@app.route('/post_bankaccount', methods=['POST'])
+def post_bankaccount():
+    #find biggest primary key id and increment by 1
+    cmd = 'SELECT MAX(bankaccountid) FROM bank_accounts'
+    cursor = g.conn.execute(cmd)
+    for result in cursor:
+        bankaccountid = result[0] + 1
+
+    bankaccount = [bankaccountid, request.form['aba'], request.form['accountnumber'], uid, request.form['directdeposit']]
+    print(bankaccount)
+    cmd = 'INSERT INTO bank_accounts VALUES (%s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (bankaccount[0], bankaccount[1], bankaccount[2], bankaccount[3], bankaccount[4]));
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=0))
+
+#posting stock trades
 @app.route('/post_trade', methods=['POST'])
 def post_trade():
-    users = [request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
-    cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)';
-    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6], users[7], users[8], users[9], users[10]));
-    return redirect(url_for('portfolio', uid=uid))
+    #find biggest primary key id and increment by 1
+    cmd = 'SELECT MAX(stockid) FROM stock_transactions'
+    cursor = g.conn.execute(cmd)
+    for result in cursor:
+        stockid = result[0] + 1
+    tdate = datetime.date.today()
+    tdate = str(tdate)
+
+    if request.form['order']=='buy':
+        shares = int(request.form['shares'])
+    else:
+        shares = int(request.form['shares'])*-1
+    transaction = [stockid, request.form['ticker'], uid, request.form['portfolio'], shares, "B", request.form['currentprice'], tdate, 0, 0, tdate]
+    cmd = 'INSERT INTO stock_transactions VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (transaction[0], transaction[1], transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7], transaction[8], transaction[9], transaction[10]));
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=request.form['portfolio']))
 
 @app.route('/post_cash', methods=['POST'])
 def post_cash():
@@ -140,10 +180,10 @@ def post_cash():
     else:
         amount = float(request.form['amount'])*-1
     #insert transaction into database
-    cash = [transactionid, tdate, uid, float(request.form['bankaccountid']), Gportfolioid, amount]
+    cash = [transactionid, tdate, uid, float(request.form['bankaccountid']), request.form['portfolio'], amount]
     cmd = 'INSERT INTO cash_transactions VALUES (%s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (cash[0], cash[1], cash[2], cash[3], cash[4], cash[5]));
-    return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=request.form['portfolio']))
 
 
 
