@@ -25,13 +25,13 @@
         </button>
         <a class="navbar-brand" href="/">Logout</a>
         <a class="navbar-brand" href="/profile">Profile</a>
-        <a class="navbar-brand" href="/">Portfolio</a>
+        <a class="navbar-brand" href="/portfolio/<uid>">Portfolio</a>
       </div>
     </nav>
-<h1>Welcome, {{names.fname}} {{names.lname}}!</h1>
-<h2> Name: {{names.fname}} {{names.lname}} </h2>
-<h2> Address: {{names.address}} </h2>
-<h2> Email: {{names.email}} </h2>
-<h2> SSN: {{names.ssn}} </h2>
+<h1>Welcome, {{userdata.fname}} {{userdata.lname}}!</h1>
+<h2> Name: {{userdata.fname}} {{userdata.lname}} </h2>
+<h2> Address: {{userdata.address}} </h2>
+<h2> Email: {{userdata.email}} </h2>
+<h2> SSN: {{userdata.ssn}} </h2>
 </body>
 </html>

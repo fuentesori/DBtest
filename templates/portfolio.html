@@ -39,8 +39,8 @@
 <tr>
 <td valign="top" width="50%">
   <form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>'>
-    <select id="portfolio" name="option" width="300px">
-      <option selected value>  </option>
+    <select id="portfolio" name="portfolio" width="300px">
+      <option selected disabled value>  </option>
       {% for portfolio in portfolios %}
         <option value="{{ portfolio }}">{{ portfolio }}</option>
       {% endfor %}
@@ -89,10 +89,10 @@
 
 <form method="post" action="/post_cash">
     <label>Account:</label>
-    <select id="account" name="option" width="300px">
+    <select id="bankaccountid" name="bankaccountid" width="300px">
       <option disabled selected value>  </option>
-      {% for account in accounts %}
-        <option value="{{ account }}">{{ account }}</option>
+      {% for bankaccountid in bankaccountids %}
+        <option value="{{ bankaccountid }}">{{ bankaccountid }}</option>
       {% endfor %}
     </select>
     <label>Amount:</label>
