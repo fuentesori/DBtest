@@ -50,25 +50,37 @@ def checklogin():
     #set up variables
     link = []
     loginuid = request.form['uid']
+    password = request.form['password']
     checkuser = ""
     #SQL query the user login
     cmd ="SELECT uid from users where uid=%s"
     cursor = g.conn.execute(cmd,loginuid)
     for result in cursor:
         checkuser= result
-        #check if loginuid is good in database
-        if checkuser[0] == float(loginuid):
+    #check if loginuid is good in database
+    if checkuser != "":
+        cmd ="SELECT password from users where uid=%s"
+        cursor = g.conn.execute(cmd,loginuid)
+        for result in cursor:
+            checkpassword= result
+        if checkpassword[0]==password:
             link = 'portfolio'
             #set global uid if uid is good
             global uid
             uid = checkuser[0]
         else:
-            link = 'badlog'
+            link = 'badpw'
+    else:
+        link = 'badlog'
     return redirect(url_for(link, passuid=int(loginuid), portfolioid=0))
 
 @app.route('/incorrectlogon/<passuid>/<portfolioid>')
 def badlog(passuid, portfolioid):
     return render_template("incorrectlogon.html", baduid=passuid)
+
+@app.route('/incorrectpw/<passuid>/<portfolioid>')
+def badpw(passuid, portfolioid):
+    return render_template("incorrectpw.html", baduid=passuid)
 
 #User portfolio
 @app.route('/portfolio/<passuid>/<portfolioid>', methods=['POST'])
