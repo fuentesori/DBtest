@@ -28,10 +28,25 @@
         <a class="navbar-brand" href="/portfolio/<uid>">Portfolio</a>
       </div>
     </nav>
-<h1>Welcome, {{userdata.fname}} {{userdata.lname}}!</h1>
-<h2> Name: {{userdata.fname}} {{userdata.lname}} </h2>
-<h2> Address: {{userdata.address}} </h2>
-<h2> Email: {{userdata.email}} </h2>
-<h2> SSN: {{userdata.ssn}} </h2>
+
+<form method="post" action="/update_user">
+  <label>First name:</label>
+  <input id="fname" name="fname" type="text" value={{userdata.fname}} />
+  <label>Last Name:</label>
+  <input id="lname" name="lname" type="text" value={{userdata.lname}} />
+  <label>Email:</label>
+  <input id="email" name="email" type="text" />
+  <label>Address:</label>
+  <input id="address" name="address"  value="{{userdata.address}}" />
+  <label>Phone:</label>
+  <input id="phone" name="phone" type="text" value={{userdata.phone}} />
+  <label>SSN:</label>
+  <input id="ssn" name="ssn" type="text" value={{userdata.ssn}} />
+  <label>Password:</label>
+  <input id="password" name="password" type="text" value={{userdata.password}} />
+  <input type="submit" value="Update profile"/>
+</form>
+
+
 </body>
 </html>
