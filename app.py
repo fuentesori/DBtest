@@ -49,19 +49,18 @@ def checklogin():
     #set up variables
     link = []
     loginuid = request.form['uid']
-    checkuser = null
+    checkuser = ""
     #SQL query the user login
     cmd ="SELECT uid from users where uid=%s"
-    cursor = g.conn.execute(cmd,loginuid[0])
+    cursor = g.conn.execute(cmd,loginuid)
     for result in cursor:
-        checkuser = result
-
+        checkuser= result
         #check if loginuid is good in database
-        if int(checkuser[0]) == int(loginuid):
+        if checkuser[0] == float(loginuid):
             link = 'portfolio'
             #set global uid if uid is good
             global uid
-            uid = int(checkuser[0])
+            uid = checkuser[0]
         else:
             link = 'badlog'
     return redirect(url_for(link, passuid=int(loginuid), portfolioid=0))
