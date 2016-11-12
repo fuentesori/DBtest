@@ -116,18 +116,18 @@ def post_trade():
     g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6], users[7], users[8], users[9], users[10]));
     return redirect(url_for('portfolio', uid=uid))
 
-@app.route('/post_cash', methods=['POST'])
-def post_user():
-    uid=1
-    portfolioid =9
-    cmd = 'SELECT MAX(transactionid) FROM cash_transactions'
-    cursor = g.conn.execute(cmd)
-    for result in cursor:
-        transactionid = cursor + 1
-    cash = [transactionid, request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
-    cmd = 'INSERT INTO cash_transactions VALUES (%s, %s, %s, %s, %s, %s)';
-    g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5]));
-    return redirect(url_for('portfolio', uid=uid))
+    # @app.route('/post_cash', methods=['POST'])
+    # def post_user():
+    #     uid=1
+    #     portfolioid =9
+    #     cmd = 'SELECT MAX(transactionid) FROM cash_transactions'
+    #     cursor = g.conn.execute(cmd)
+    #     for result in cursor:
+    #         transactionid = cursor + 1
+    #     cash = [transactionid, request.form['uid'], request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn']]
+    #     cmd = 'INSERT INTO cash_transactions VALUES (%s, %s, %s, %s, %s, %s)';
+    #     g.conn.execute(cmd, (cash[0], cash[1], cash[2], cash[3], users[4], users[5]));
+    #     return redirect(url_for('portfolio', uid=uid))
 
 
 #New User page and adding new user to database

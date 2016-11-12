@@ -33,36 +33,59 @@
 <h1>Welcome to your stock portfolio, {{user.fname}} {{user.lname}}</h1>
 
 
-<form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>'>
-  <select id="portfolio" name="option" width="300px">
-    <option selected value>  </option>
-    {% for portfolio in portfolios %}
-      <option value="{{ portfolio }}">{{ portfolio }}</option>
-    {% endfor %}
-  </select>
-  <input type="submit"/>
-</form>
-{% for transaction in transactions%}
-  <li> {{transaction.ticker}} {{transaction.shares}} {{transaction.open_position_price}}  </li>
-{% endfor %}
 
 
-<form method="post" action="/post_stock">
-    <label>Ticker:</label>
-    <select id="ticker" name="option" width="300px">
-      <option disabled selected value>  </option>
-      {% for ticker in tickers %}
-        <option value="{{ ticker }}">{{ ticker.ticker }}</option>
+<table valign="top">
+<tr>
+<td valign="top" width="50%">
+  <form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>'>
+    <select id="portfolio" name="option" width="300px">
+      <option selected value>  </option>
+      {% for portfolio in portfolios %}
+        <option value="{{ portfolio }}">{{ portfolio }}</option>
       {% endfor %}
     </select>
-    <label>Shares:</label>
-    <input id="shares" name="shares" type="int"/>
-    <label>Current price:</label>
-    <input id="current_price" name="current_price" type="float"/> <br>
-    <input type="radio" name="order" value="buy"> Buy<br>
-    <input type="radio" name="order" value="sell"> Sell<br>
-    <input type="submit" value="Execute"/>
-</form>
+    <input type="submit"/>
+  </form>
+</td>
+
+
+</tr>
+
+
+<tr>
+  <td valign="top">
+    <h2> Current Portfolio </h2>
+<table>
+  <th> Ticker </th>
+  <th> Shares </th>
+  <th> Current Price (fix) </th>
+{% for transaction in transactions%}
+  <tr><td> {{transaction.ticker}}</td><td> {{transaction.shares}}</td><td> {{transaction.open_position_price}}</td>  </tr>
+{% endfor %}
+</table>
+
+<td valign="top">
+
+
+
+  <form method="post" action="/post_stock">
+      <label>Ticker:</label>
+      <select id="ticker" name="option" width="300px">
+        <option disabled selected value>  </option>
+        {% for ticker in tickers %}
+          <option value="{{ ticker }}">{{ ticker.ticker }}</option>
+        {% endfor %}
+      </select>
+      <label>Shares:</label>
+      <input id="shares" name="shares" type="int"/>
+      <label>Current price:</label>
+      <input id="current_price" name="current_price" type="float"/> <br>
+      <input type="radio" name="order" value="buy"> Buy<br>
+      <input type="radio" name="order" value="sell"> Sell<br>
+      <input type="submit" value="Execute"/>
+  </form>
+
 
 <form method="post" action="/post_cash">
     <label>Account:</label>
@@ -78,6 +101,26 @@
     <input id="order" type="radio" name="order" value="Out"> Out<br>
     <input type="submit" value="Transfer"/>
 </form>
+</td>
+</tr>
+<tr>
+  <td valign="top">
 
+<h2> Closed Positions </h2>
+<table>
+<th> Ticker </th>
+<th> Shares </th>
+<th> Current Price (fix) </th>
+{% for transaction in transactions%}
+<tr><td> {{transaction.ticker}}</td><td> {{transaction.shares}}</td><td> {{transaction.open_position_price}}</td>  </tr>
+{% endfor %}
+</table>
+
+
+</td>
+
+
+</tr>
+</table>
 </body>
 </html>
