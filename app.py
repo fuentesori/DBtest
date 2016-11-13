@@ -95,16 +95,22 @@ def badpw(passuid, portfolioid):
 #User portfolio
 @app.route('/portfolio/return')
 def portfolioreturn():
+    if uid == 0:
+        return redirect(url_for('index'))
     return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
 
 @app.route('/portfolio/<passuid>/<portfolioid>', methods=['POST'])
 def populateportfolio(passuid,portfolioid):
+    if uid == 0:
+        return redirect(url_for('index'))
     global Gportfolioid
     Gportfolioid = float(request.form['portfolio'])
     return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
 
 @app.route('/portfolio/<passuid>/<portfolioid>')
 def portfolio(passuid, portfolioid):
+    if uid == 0:
+        return redirect(url_for('index'))
     #obtain user's list of portfolios
     cmd ="SELECT portfolioid FROM portfolio where uid=%s"
     cursor = g.conn.execute(cmd, uid)
@@ -144,6 +150,8 @@ def portfolio(passuid, portfolioid):
 
 @app.route('/post_portfolio', methods=['POST'])
 def post_portfolio():
+    if uid == 0:
+        return redirect(url_for('index'))
     #find biggest primary key id and increment by 1
     cmd = 'SELECT MAX(portfolioid) FROM portfolio'
     cursor = g.conn.execute(cmd)
@@ -157,6 +165,8 @@ def post_portfolio():
 
 @app.route('/post_bankaccount', methods=['POST'])
 def post_bankaccount():
+    if uid == 0:
+        return redirect(url_for('index'))
     #find biggest primary key id and increment by 1
     cmd = 'SELECT MAX(bankaccountid) FROM bank_accounts'
     cursor = g.conn.execute(cmd)
@@ -173,6 +183,8 @@ def post_bankaccount():
 #posting stock trades
 @app.route('/post_trade', methods=['POST'])
 def post_trade():
+    if uid == 0:
+        return redirect(url_for('index'))
     #find biggest primary key id and increment by 1
     cmd = 'SELECT MAX(stockid) FROM stock_transactions'
     cursor = g.conn.execute(cmd)
@@ -193,6 +205,8 @@ def post_trade():
 
 @app.route('/post_cash', methods=['POST'])
 def post_cash():
+    if uid == 0:
+        return redirect(url_for('index'))
     amount=[]
     tdate = ""
     #find biggest primary key id and increment by 1
@@ -228,6 +242,8 @@ def usercreated(uid):
 
 @app.route('/post_user', methods=['POST'])
 def post_user():
+    if uid == 0:
+        return redirect(url_for('index'))
     #find biggest primary key id and increment by 1
     cmd = 'SELECT MAX(uid) FROM users'
     cursor = g.conn.execute(cmd)
@@ -243,6 +259,8 @@ def post_user():
 #Existing user profile, view and update user data
 @app.route('/profile')
 def profile():
+    if uid == 0:
+        return redirect(url_for('index'))
     cmd = "SELECT * FROM users where uid=%s"
     cursor = g.conn.execute(cmd,uid)
     userdata = []
@@ -268,6 +286,8 @@ def profile():
 
 @app.route('/update_user', methods=['POST'])
 def update_user():
+    if uid == 0:
+        return redirect(url_for('index'))
     #fill out user data and update in database
     users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password'], request.form['email']]
     cmd = 'UPDATE users SET (fname, lname, address, phone, ssn, password, email) = (%s, %s, %s, %s, %s, %s, %s) WHERE uid=%s';
@@ -279,7 +299,7 @@ def update_user():
     for result in cursor:
         userdata=result
     cursor.close()
-    return render_template("profile.html", userdata=userdata)
+    return redirect(url_for('profile'))
 
 
 
