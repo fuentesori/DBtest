@@ -42,7 +42,9 @@ def teardown_request(exception):
   except Exception as e:
     pass
 
-#login page and and handling login errors
+"""
+Login page and handling login errors including bad user and bad password
+"""
 @app.route('/')
 def index():
     return render_template("login.html")
@@ -91,6 +93,14 @@ def badlog(passuid, portfolioid):
 @app.route('/incorrectpw/<passuid>/<portfolioid>')
 def badpw(passuid, portfolioid):
     return render_template("incorrectpw.html", baduid=passuid)
+
+
+"""
+Load user portfolio including open and closed positions, includes:
+- redirects from navigation page
+- reload portfolio based on selection from drop down
+- load portfolio page
+"""
 
 #User portfolio
 @app.route('/portfolio/return')
@@ -147,6 +157,15 @@ def portfolio(passuid, portfolioid):
     cursor.close()
 
     return render_template("portfolio.html", portfolioid=Gportfolioid, portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, bankaccountids=bankaccountids)
+
+
+"""
+Updates to the database from the portfolio page:
+- Create new portfolio
+- Create a new bank account
+- Execute trades
+- Transfer cash in and out of accounts
+"""
 
 @app.route('/post_portfolio', methods=['POST'])
 def post_portfolio():
@@ -229,16 +248,22 @@ def post_cash():
     g.conn.execute(cmd, (cash[0], cash[1], cash[2], cash[3], cash[4], cash[5]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=request.form['portfolio']))
 
-
+"""
+Creating and editing user acounts and related information:
+- Create new user
+- Redirect after successful user creation communicate uid
+- Render an existing user profile
+- Update an existing user or delete
+- Delete bank account
+- Delete a portfolio
+"""
 
 #New User page and adding new user to database
 @app.route('/newuser')
 def newuser():
     return render_template("add_user.html")
 
-@app.route('/usercreated/<uid>')
-def usercreated(uid):
-    return render_template("usercreated.html", uid=uid)
+
 
 @app.route('/post_user', methods=['POST'])
 def post_user():
@@ -255,6 +280,10 @@ def post_user():
     cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6], users[7]));
     return redirect(url_for('usercreated', uid=int(uid)))
+
+@app.route('/usercreated/<uid>')
+def usercreated(uid):
+    return render_template("usercreated.html", uid=uid)
 
 #Existing user profile, view and update user data
 @app.route('/profile')
@@ -300,7 +329,6 @@ def update_user():
         userdata=result
     cursor.close()
     return redirect(url_for('profile'))
-
 
 
 
