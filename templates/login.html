@@ -30,13 +30,13 @@
     </nav>
 
   <h1> Please log in </h1>
-  <form method="post" action="/check_login">
-      <label>UserID:</label>
-      <input id="uid" name="uid" type="number"/>
-      <label>Password:</label>
-      <input id="password" name="password" type="text"/>
-      <input type="submit" value="Login"/>
-  </form>
+    <form method="post" action="/check_login">
+        <label>UserID:</label>
+        <input id="uid" name="uid" type="number" pattern="^[0-9]+$"/>
+        <label>Password:</label>
+        <input id="password" name="password" type="text" pattern="^[a-zA-Z0-9_]+$"/>
+        <input type="submit" value="Login"/>
+    </form>
 
   <form action="/newuser">
       <input type="submit" value="Create new user"/>

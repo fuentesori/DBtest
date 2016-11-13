@@ -128,7 +128,10 @@
 
   <tr>
     <td valign="top">
-      <h3> Current Portfolio </h3>
+      <h3> Current Portfolio {% if portfolioid != 0 %}
+          {{portfolioid}}
+        {% endif %}</h3>
+      <h5>{{currentcash}} </h5>
         <table>
           <th> Ticker </th>
           <th> Net shares </th>
