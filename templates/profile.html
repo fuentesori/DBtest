@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>This is the portfolio page</title>
+    <title>Update your profile</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -29,22 +29,71 @@
       </div>
     </nav>
 
+<h2> Update your personal information </h2>
 <form method="post" action="/update_user">
   <label>First name:</label>
-  <input id="fname" name="fname" type="text" value={{userdata.fname}} />
+  <input id="fname" name="fname" type="text" value={{userdata.fname}} /> <br>
   <label>Last Name:</label>
-  <input id="lname" name="lname" type="text" value={{userdata.lname}} />
+  <input id="lname" name="lname" type="text" value={{userdata.lname}} /> <br>
   <label>Email:</label>
-  <input id="email" name="email" type="text" value="{{userdata.email}}" />
+  <input id="email" name="email" type="text" value="{{userdata.email}}" /> <br>
   <label>Address:</label>
-  <input id="address" name="address"  value="{{userdata.address}}" />
+  <input id="address" name="address"  value="{{userdata.address}}" /> <br>
   <label>Phone:</label>
-  <input id="phone" name="phone" type="text" value={{userdata.phone}} />
+  <input id="phone" name="phone" type="text" value={{userdata.phone}} /> <br>
   <label>SSN:</label>
-  <input id="ssn" name="ssn" type="text" value={{userdata.ssn}} />
+  <input id="ssn" name="ssn" type="text" value={{userdata.ssn}} /> <br>
   <label>Password:</label>
-  <input id="password" name="password" type="text" value={{userdata.password}} />
+  <input id="password" name="password" type="text" value={{userdata.password}} /> <br>
   <input type="submit" value="Update profile"/>
+</form>
+<br>
+
+<form method="post" action="/delete_user">
+  <input type="submit" value="Delete account"/>
+</form>
+<br>
+
+<form name="modifybankaccount" method="post" action='/modify_bankaccount'>
+  <label>Account:</label>
+  <select id="bankaccountid" name="bankaccountid" width="300px">
+    <option disabled selected value>  </option>
+    {% for bankdata in bankaccountids %}
+      <option value="{{ bankdata.bankaccountid }}">{{ bankdata.bankaccountid }}</option>
+    {% endfor %}
+  </select>
+  <label>Bank ABA number:</label>
+  <input id="aba" name="aba" type="text" value="{{ bankaccountids.bankid }}"/>
+  <label>Account number:</label>
+  <input id="accountnumber" name="accountnumber" type="text" value="{{ bankaccountids.accountid }}"/>
+  <label>Direct deposit?:</label>
+  <select id="directdeposit" name="directdeposit" width="300px" value="{{ bankaccountids.direct_deposit }}">
+    <option selected disabled value>  </option>
+      <option value="true">true</option>
+      <option value="false">false</option>
+  </select>
+  <select id="directdeposit" name="directdeposit" width="300px">
+      <option  selected value="update">Update</option>
+      <option value="delete">Delete</option>
+  </select>
+  <input type="submit" value="Submit"/>
+
+  
+</form>
+
+
+
+<br>
+
+<h2> Delete portfolios </h2>
+<form name="portfolio" method="post" action='/delete_portfolio>'>
+  <select id="portfolio" name="portfolio" width="300px">
+    <option selected disabled value>  </option>
+    {% for portfolio in portfolios %}
+      <option value="{{ portfolio }}">{{ portfolio }}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Delete portfolio"/>
 </form>
 
 

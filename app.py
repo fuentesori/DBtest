@@ -65,12 +65,14 @@ def checklogin():
     cursor = g.conn.execute(cmd,loginuid)
     for result in cursor:
         checkuser= result
+    cursor.close()
     #check if loginuid is good in database
     if checkuser != "":
         cmd ="SELECT password from users where uid=%s"
         cursor = g.conn.execute(cmd,loginuid)
         for result in cursor:
             checkpassword= result
+        cursor.close()
         if checkpassword[0]==password:
             link = 'portfolio'
             #set global uid if uid is good
@@ -147,6 +149,7 @@ def post_portfolio():
     cursor = g.conn.execute(cmd)
     for result in cursor:
         portfolioid = result[0] + 1
+    cursor.close()
     portfolio = [portfolioid, uid, 0]
     cmd = 'INSERT INTO portfolio VALUES (%s, %s, %s)';
     g.conn.execute(cmd, (portfolio[0], portfolio[1], portfolio[2]));
@@ -159,6 +162,7 @@ def post_bankaccount():
     cursor = g.conn.execute(cmd)
     for result in cursor:
         bankaccountid = result[0] + 1
+    cursor.close()
 
     bankaccount = [bankaccountid, request.form['aba'], request.form['accountnumber'], uid, request.form['directdeposit']]
     print(bankaccount)
@@ -174,6 +178,7 @@ def post_trade():
     cursor = g.conn.execute(cmd)
     for result in cursor:
         stockid = result[0] + 1
+    cursor.close()
     tdate = datetime.date.today()
     tdate = str(tdate)
 
@@ -195,6 +200,7 @@ def post_cash():
     cursor = g.conn.execute(cmd)
     for result in cursor:
         transactionid = result[0] + 1
+    cursor.close()
     #set transfer data
     tdate = datetime.date.today()
     tdate = str(tdate)
@@ -227,6 +233,7 @@ def post_user():
     cursor = g.conn.execute(cmd)
     for result in cursor:
         uid = result[0] + 1
+    cursor.close()
     #fill out user data and store in database
     users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password'], request.form['email']]
     cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s)';
@@ -242,7 +249,22 @@ def profile():
     for result in cursor:
         userdata=result
     cursor.close()
-    return render_template("profile.html", userdata=userdata)
+
+    cmd ="SELECT portfolioid FROM portfolio where uid=%s"
+    cursor = g.conn.execute(cmd, uid)
+    portfolios = []
+    for result in cursor:
+        portfolios.append(result[0])
+    cursor.close()
+
+    cmd = "SELECT * FROM bank_accounts WHERE uid=%s ORDER BY bankaccountid"
+    cursor = g.conn.execute(cmd,uid)
+    bankaccountids = []
+    for result in cursor:
+        bankaccountids.append(result)
+    cursor.close()
+
+    return render_template("profile.html", userdata=userdata, portfolios=portfolios, bankaccountids=bankaccountids )
 
 @app.route('/update_user', methods=['POST'])
 def update_user():
