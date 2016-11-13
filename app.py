@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, redirect, url_for, render_template, g, Response
 global Gportfolioid
 Gportfolioid = 0
+global uid
+uid = 0
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -83,6 +85,10 @@ def badpw(passuid, portfolioid):
     return render_template("incorrectpw.html", baduid=passuid)
 
 #User portfolio
+@app.route('/portfolio/return')
+def portfolioreturn():
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
+
 @app.route('/portfolio/<passuid>/<portfolioid>', methods=['POST'])
 def populateportfolio(passuid,portfolioid):
     global Gportfolioid
@@ -99,8 +105,8 @@ def portfolio(passuid, portfolioid):
         portfolios.append(result[0])
     cursor.close()
     #render user's portfoliodata
-    cmd ="SELECT * FROM stock_transactions where uid=%s and portfolioid=%s"
-    cursor = g.conn.execute(cmd, uid, portfolioid)
+    cmd ="SELECT t1.ticker, t1.netshares, t1.netcost, t2.current_price, (t1.netshares * t2.current_price) AS currentvalue FROM (SELECT ticker, SUM(shares) As netshares, SUM(shares * open_position_price) AS netcost FROM stock_transactions WHERE uid=%s and portfolioid=%s GROUP BY ticker) AS t1, (SELECT ticker, current_price  FROM us_stock) AS t2 WHERE t1.ticker = t2.ticker;"
+    cursor = g.conn.execute(cmd, float(uid), float(Gportfolioid))
     transactions = []
     for result in cursor:
         transactions.append(result)
@@ -126,7 +132,7 @@ def portfolio(passuid, portfolioid):
         bankaccountids.append(result[0])
     cursor.close()
 
-    return render_template("portfolio.html", portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, bankaccountids=bankaccountids)
+    return render_template("portfolio.html", portfolioid=Gportfolioid, portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, bankaccountids=bankaccountids)
 
 @app.route('/post_portfolio', methods=['POST'])
 def post_portfolio():
@@ -138,7 +144,7 @@ def post_portfolio():
     portfolio = [portfolioid, uid, 0]
     cmd = 'INSERT INTO portfolio VALUES (%s, %s, %s)';
     g.conn.execute(cmd, (portfolio[0], portfolio[1], portfolio[2]));
-    return redirect(url_for('portfolio', passuid=uid, portfolioid=0))
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
 
 @app.route('/post_bankaccount', methods=['POST'])
 def post_bankaccount():
@@ -152,7 +158,7 @@ def post_bankaccount():
     print(bankaccount)
     cmd = 'INSERT INTO bank_accounts VALUES (%s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (bankaccount[0], bankaccount[1], bankaccount[2], bankaccount[3], bankaccount[4]));
-    return redirect(url_for('portfolio', passuid=uid, portfolioid=0))
+    return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
 
 #posting stock trades
 @app.route('/post_trade', methods=['POST'])

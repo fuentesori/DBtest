@@ -25,7 +25,7 @@
         </button>
         <a class="navbar-brand" href="/">Logout</a>
         <a class="navbar-brand" href="/profile">Profile</a>
-        <a class="navbar-brand" href="/">Portfolio</a>
+        <a class="navbar-brand" href="/portfolio/return">Portfolio</a>
       </div>
     </nav>
 
@@ -78,10 +78,14 @@
     <h2> Current Portfolio </h2>
 <table>
   <th> Ticker </th>
-  <th> Shares </th>
-  <th> Current Price (fix) </th>
-{% for transaction in transactions%}
-  <tr><td> {{transaction.ticker}}</td><td> {{transaction.shares}}</td><td> {{transaction.open_position_price}}</td>  </tr>
+  <th> Net shares </th>
+  <th> Net cost  </th>
+  <th> Current price </th>
+  <th> Current value </th>
+{% for transaction in transactions %}
+{% if transaction.netshares != 0 %}
+  <tr><td> {{transaction.ticker}}</td> <td> {{transaction.netshares}}</td> <td> {{transaction.netcost}}</td><td> {{transaction.current_price}}</td> <td> {{transaction.currentvalue}}</td> </tr>
+{% endif %}
 {% endfor %}
 </table>
 
@@ -142,11 +146,14 @@
 
 <h2> Closed Positions </h2>
 <table>
-<th> Ticker </th>
-<th> Shares </th>
-<th> Current Price (fix) </th>
-{% for transaction in transactions%}
-<tr><td> {{transaction.ticker}}</td><td> {{transaction.shares}}</td><td> {{transaction.open_position_price}}</td>  </tr>
+  <th> Ticker </th>
+  <th> Net shares </th>
+  <th> Net cost  </th>
+  <th> Current price </th>
+{% for transaction in transactions %}
+{% if transaction.netshares == 0 %}
+  <tr><td> {{transaction.ticker}}</td> <td> {{transaction.netshares}}</td> <td> {{transaction.netcost}}</td><td> {{transaction.current_price}}</td>  </tr>
+{% endif %}
 {% endfor %}
 </table>
 
