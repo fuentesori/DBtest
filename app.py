@@ -53,6 +53,10 @@ def index():
 def logout():
     global uid
     uid = 0
+    global Gportfolioid
+    Gportfolioid = 0
+    global currentcash
+    currentcash = 0
     return redirect(url_for('index'))
 
 @app.route('/check_login', methods=['POST'])
@@ -129,12 +133,27 @@ def portfolio(passuid, portfolioid):
         portfolios.append(result[0])
     cursor.close()
     #render user's portfoliodata
-    cmd ="SELECT t1.ticker, t1.netshares, t1.netcost, t2.current_price, (t1.netshares * t2.current_price) AS currentvalue FROM (SELECT ticker, SUM(shares) As netshares, SUM(shares * open_position_price) AS netcost FROM stock_transactions WHERE uid=%s and portfolioid=%s GROUP BY ticker) AS t1, (SELECT ticker, current_price  FROM us_stock) AS t2 WHERE t1.ticker = t2.ticker;"
+    cmd ="SELECT t1.ticker, t1.netshares, t1.netcost, t2.current_price, (t1.netshares * t2.current_price) AS currentvalue FROM (SELECT ticker, SUM(shares) As netshares, SUM(shares * open_position_price*-1) AS netcost FROM stock_transactions WHERE uid=%s and portfolioid=%s GROUP BY ticker) AS t1, (SELECT ticker, current_price  FROM us_stock) AS t2 WHERE t1.ticker = t2.ticker;"
     cursor = g.conn.execute(cmd, float(uid), float(Gportfolioid))
     transactions = []
+    nettrades = 0
     for result in cursor:
         transactions.append(result)
+        nettrades = nettrades + result[2]
     cursor.close()
+
+    #net users input and output of cash for a specific portfolio
+    cmd ="SELECT amount FROM cash_transactions WHERE uid=%s AND portfolioid=%s;"
+    cursor = g.conn.execute(cmd, float(uid), float(Gportfolioid))
+    netcash = 0
+
+    #get net cash from cash transactions
+    for result in cursor:
+        netcash = netcash + result[0]
+    cursor.close()
+    global currentcash
+    currentcash = netcash + nettrades
+    #select user data
     cmd = "SELECT * FROM users where uid=%s"
     cursor = g.conn.execute(cmd,uid)
     userinfo = []
@@ -156,7 +175,7 @@ def portfolio(passuid, portfolioid):
         bankaccountids.append(result[0])
     cursor.close()
 
-    return render_template("portfolio.html", portfolioid=Gportfolioid, portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, bankaccountids=bankaccountids)
+    return render_template("portfolio.html", portfolioid=Gportfolioid, portfolios=portfolios, transactions=transactions, user=userinfo, tickers=tickers, bankaccountids=bankaccountids, currentcash='${:,.2f}'.format(currentcash))
 
 
 """
@@ -166,7 +185,7 @@ Updates to the database from the portfolio page:
 - Execute trades
 - Transfer cash in and out of accounts
 """
-
+#create portfolio
 @app.route('/post_portfolio', methods=['POST'])
 def post_portfolio():
     if uid == 0:
@@ -181,7 +200,7 @@ def post_portfolio():
     cmd = 'INSERT INTO portfolio VALUES (%s, %s, %s)';
     g.conn.execute(cmd, (portfolio[0], portfolio[1], portfolio[2]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
-
+#create bank account
 @app.route('/post_bankaccount', methods=['POST'])
 def post_bankaccount():
     if uid == 0:
@@ -217,15 +236,20 @@ def post_trade():
         shares = int(request.form['shares'])
     else:
         shares = int(request.form['shares'])*-1
+    if (float(shares)*-1*float(request.form['currentprice']) + currentcash) <0:
+        return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=Gportfolioid))
+
     transaction = [stockid, request.form['ticker'], uid, request.form['portfolio'], shares, "B", request.form['currentprice'], tdate, 0, 0, tdate]
     cmd = 'INSERT INTO stock_transactions VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (transaction[0], transaction[1], transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7], transaction[8], transaction[9], transaction[10]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=request.form['portfolio']))
 
+#transfer cash
 @app.route('/post_cash', methods=['POST'])
 def post_cash():
     if uid == 0:
         return redirect(url_for('index'))
+
     amount=[]
     tdate = ""
     #find biggest primary key id and increment by 1
@@ -242,11 +266,42 @@ def post_cash():
         amount = float(request.form['amount'])
     else:
         amount = float(request.form['amount'])*-1
+
+    if (amount + currentcash) <0:
+        return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=Gportfolioid))
     #insert transaction into database
     cash = [transactionid, tdate, uid, float(request.form['bankaccountid']), request.form['portfolio'], amount]
     cmd = 'INSERT INTO cash_transactions VALUES (%s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (cash[0], cash[1], cash[2], cash[3], cash[4], cash[5]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=request.form['portfolio']))
+
+
+@app.route('/insufficientfunds/<passuid>/<portfolioid>')
+def insufficientfunds(passuid,portfolioid):
+    #obtain user's list of portfolios
+    cmd ="SELECT portfolioid FROM portfolio where uid=%s"
+    cursor = g.conn.execute(cmd, uid)
+    portfolios = []
+    for result in cursor:
+        portfolios.append(result[0])
+    cursor.close()
+    #obtain us tickers
+    cmd = "SELECT ticker, current_price FROM us_stock ORDER BY ticker"
+    cursor = g.conn.execute(cmd)
+    tickers = []
+    for result in cursor:
+        tickers.append(result)
+    cursor.close()
+    #obtain backaccounts
+    cmd = "SELECT bankaccountid FROM bank_accounts WHERE uid=%s ORDER BY bankaccountid"
+    cursor = g.conn.execute(cmd,uid)
+    bankaccountids = []
+    for result in cursor:
+        bankaccountids.append(result[0])
+    cursor.close()
+
+    return render_template("notenoughfunds.html", portfolioid=Gportfolioid, portfolios=portfolios, tickers=tickers, bankaccountids=bankaccountids, currentcash='${:,.2f}'.format(currentcash))
+
 
 """
 Creating and editing user acounts and related information:
@@ -267,8 +322,6 @@ def newuser():
 
 @app.route('/post_user', methods=['POST'])
 def post_user():
-    if uid == 0:
-        return redirect(url_for('index'))
     #find biggest primary key id and increment by 1
     cmd = 'SELECT MAX(uid) FROM users'
     cursor = g.conn.execute(cmd)
