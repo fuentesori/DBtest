@@ -47,6 +47,12 @@ def teardown_request(exception):
 def index():
     return render_template("login.html")
 
+@app.route('/logout')
+def logout():
+    global uid
+    uid = 0
+    return redirect(url_for('index'))
+
 @app.route('/check_login', methods=['POST'])
 def checklogin():
     #set up variables
