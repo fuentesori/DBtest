@@ -132,6 +132,7 @@ def portfolio(passuid, portfolioid):
     for result in cursor:
         portfolios.append(result[0])
     cursor.close()
+
     #render user's portfoliodata
     cmd ="SELECT t1.ticker, t1.netshares, t1.netcost, t2.current_price, (t1.netshares * t2.current_price) AS currentvalue FROM (SELECT ticker, SUM(shares) As netshares, SUM(shares * open_position_price*-1) AS netcost FROM stock_transactions WHERE uid=%s and portfolioid=%s GROUP BY ticker) AS t1, (SELECT ticker, current_price  FROM us_stock) AS t2 WHERE t1.ticker = t2.ticker;"
     cursor = g.conn.execute(cmd, float(uid), float(Gportfolioid))
@@ -200,6 +201,7 @@ def post_portfolio():
     cmd = 'INSERT INTO portfolio VALUES (%s, %s, %s)';
     g.conn.execute(cmd, (portfolio[0], portfolio[1], portfolio[2]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
+
 #create bank account
 @app.route('/post_bankaccount', methods=['POST'])
 def post_bankaccount():
@@ -232,12 +234,39 @@ def post_trade():
     tdate = datetime.date.today()
     tdate = str(tdate)
 
+
+    #render user's portfoliodata
+    cmd ="SELECT t1.ticker, t1.netshares, t1.netcost, t2.current_price, (t1.netshares * t2.current_price) AS currentvalue FROM (SELECT ticker, SUM(shares) As netshares, SUM(shares * open_position_price*-1) AS netcost FROM stock_transactions WHERE uid=%s and portfolioid=%s GROUP BY ticker) AS t1, (SELECT ticker, current_price  FROM us_stock) AS t2 WHERE t1.ticker = t2.ticker;"
+    cursor = g.conn.execute(cmd, float(uid), float(request.form['portfolio']))
+    nettrades = 0
+    for result in cursor:
+        nettrades = nettrades + result[2]
+    cursor.close()
+
+    #net users input and output of cash for a specific portfolio
+    cmd ="SELECT amount FROM cash_transactions WHERE uid=%s AND portfolioid=%s;"
+    cursor = g.conn.execute(cmd, float(uid), float(request.form['portfolio']))
+    netcash = 0
+    #get net cash from cash transactions
+    for result in cursor:
+        netcash = netcash + result[0]
+    cursor.close()
+    thiscash = netcash + nettrades
+
+    #select user data
+    cmd = "SELECT * FROM users where uid=%s"
+    cursor = g.conn.execute(cmd,uid)
+    userinfo = []
+    for result in cursor:
+        userinfo=result
+    cursor.close()
+
     if request.form['order']=='buy':
         shares = int(request.form['shares'])
     else:
         shares = int(request.form['shares'])*-1
-    if (float(shares)*-1*float(request.form['currentprice']) + currentcash) <0:
-        return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=Gportfolioid))
+    if (float(shares)*-1*float(request.form['currentprice']) + thiscash) <0:
+        return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=request.form['portfolio'], thiscash=thiscash))
 
     transaction = [stockid, request.form['ticker'], uid, request.form['portfolio'], shares, "B", request.form['currentprice'], tdate, 0, 0, tdate]
     cmd = 'INSERT INTO stock_transactions VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)';
@@ -266,9 +295,28 @@ def post_cash():
         amount = float(request.form['amount'])
     else:
         amount = float(request.form['amount'])*-1
+    #render user's portfoliodata
+    cmd ="SELECT t1.ticker, t1.netshares, t1.netcost, t2.current_price, (t1.netshares * t2.current_price) AS currentvalue FROM (SELECT ticker, SUM(shares) As netshares, SUM(shares * open_position_price*-1) AS netcost FROM stock_transactions WHERE uid=%s and portfolioid=%s GROUP BY ticker) AS t1, (SELECT ticker, current_price  FROM us_stock) AS t2 WHERE t1.ticker = t2.ticker;"
+    cursor = g.conn.execute(cmd, float(uid), float(request.form['portfolio']))
 
-    if (amount + currentcash) <0:
-        return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=Gportfolioid))
+    nettrades = 0
+    for result in cursor:
+        nettrades = nettrades + result[2]
+    cursor.close()
+
+    #net users input and output of cash for a specific portfolio
+    cmd ="SELECT amount FROM cash_transactions WHERE uid=%s AND portfolioid=%s;"
+    cursor = g.conn.execute(cmd, float(uid), float(request.form['portfolio']))
+    netcash = 0
+
+    #get net cash from cash transactions
+    for result in cursor:
+        netcash = netcash + result[0]
+    cursor.close()
+    thiscash = netcash + nettrades
+
+    if (amount + thiscash) <0:
+        return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=request.form['portfolio'], thiscash=thiscash))
     #insert transaction into database
     cash = [transactionid, tdate, uid, float(request.form['bankaccountid']), request.form['portfolio'], amount]
     cmd = 'INSERT INTO cash_transactions VALUES (%s, %s, %s, %s, %s, %s)';
@@ -276,8 +324,8 @@ def post_cash():
     return redirect(url_for('portfolio', passuid=uid, portfolioid=request.form['portfolio']))
 
 
-@app.route('/insufficientfunds/<passuid>/<portfolioid>')
-def insufficientfunds(passuid,portfolioid):
+@app.route('/insufficientfunds/<passuid>/<portfolioid>/<thiscash>')
+def insufficientfunds(passuid,portfolioid, thiscash):
     #obtain user's list of portfolios
     cmd ="SELECT portfolioid FROM portfolio where uid=%s"
     cursor = g.conn.execute(cmd, uid)
@@ -300,7 +348,7 @@ def insufficientfunds(passuid,portfolioid):
         bankaccountids.append(result[0])
     cursor.close()
 
-    return render_template("notenoughfunds.html", portfolioid=Gportfolioid, portfolios=portfolios, tickers=tickers, bankaccountids=bankaccountids, currentcash='${:,.2f}'.format(currentcash))
+    return render_template("notenoughfunds.html", portfolioid=portfolioid, portfolios=portfolios, tickers=tickers, bankaccountids=bankaccountids, thiscash='${:,.2f}'.format(float(thiscash)))
 
 
 """
