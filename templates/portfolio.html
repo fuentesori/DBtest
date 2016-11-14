@@ -67,11 +67,11 @@
       <h3> Add bank account </h3>
         <form name="newbankaccount" method="post" action='/post_bankaccount'>
           <label>Bank ABA number:</label>
-          <input id="aba" name="aba" type="text"/>
+          <input id="aba" name="aba" type="text" required/>
           <label>Account number:</label>
-          <input id="accountnumber" name="accountnumber" type="text"/>
+          <input id="accountnumber" name="accountnumber" type="text" required/>
           <label>Direct deposit?:</label>
-          <select id="directdeposit" name="directdeposit" width="300px">
+          <select id="directdeposit" name="directdeposit" width="300px" required>
             <option selected disabled value>  </option>
               <option value="true">true</option>
               <option value="false">false</option>
@@ -86,24 +86,24 @@
       <h3> Execute stock transactions </h3>
         <form method="post" action="/post_trade">
             <label>Portfolio:</label>
-            <select id="portfolio" name="portfolio" width="300px">
+            <select id="portfolio" name="portfolio" width="300px" required>
               <option selected disabled value>  </option>
               {% for portfolio in portfolios %}
                 <option value="{{ portfolio }}">{{ portfolio }}</option>
               {% endfor %}
             </select>
             <label>Ticker:</label>
-            <select id="ticker" name="ticker" width="300px">
+            <select id="ticker" name="ticker" width="300px" required>
               <option disabled selected value>  </option>
               {% for ticker in tickers %}
                 <option value="{{ ticker.ticker }}, {{ticker.current_price}}">{{ ticker.ticker }} current price: {{ticker.current_price}}</option>
               {% endfor %}
             </select> <br>
             <label>Shares:</label>
-            <input id="shares" name="shares" type="int"/>
+            <input id="shares" name="shares" type="int" required/>
             <!-- <label>Current price:</label>
             <input id="currentprice" name="currentprice" type="float"/> -->
-            <input id="order" type="radio" name="order" value="buy">Buy
+            <input id="order" type="radio" name="order" value="buy" required>Buy
             <input id="order" type="radio" name="order" value="sell">Sell<br>
             <input type="submit" value="Execute"/>
         </form>
@@ -111,22 +111,22 @@
       <h3> Transfer funds </h3>
       <form method="post" action="/post_cash">
         <label>Portfolio:</label>
-        <select id="portfolio" name="portfolio" width="300px">
+        <select id="portfolio" name="portfolio" width="300px" required>
           <option selected disabled value>  </option>
           {% for portfolio in portfolios %}
             <option value="{{ portfolio }}">{{ portfolio }}</option>
           {% endfor %}
         </select>
           <label>Account:</label>
-          <select id="bankaccountid" name="bankaccountid" width="300px">
+          <select id="bankaccountid" name="bankaccountid" width="300px" required>
             <option disabled selected value>  </option>
             {% for bankaccountid in bankaccountids %}
               <option value="{{ bankaccountid }}">{{ bankaccountid }}</option>
             {% endfor %}
           </select>
           <label>Amount:</label>
-          <input id="amount" name="amount" type="float"/>
-          <input id="order" type="radio" name="order" value="In"> In
+          <input id="amount" name="amount" type="float" required/>
+          <input id="order" type="radio" name="order" value="In" required> In
           <input id="order" type="radio" name="order" value="Out"> Out<br>
           <input type="submit" value="Transfer"/>
       </form>
