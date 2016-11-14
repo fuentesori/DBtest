@@ -36,7 +36,7 @@
     <h3> Execute stock transactions </h3>
       <form method="post" action="/post_trade">
           <label>Portfolio:</label>
-          <select id="portfolio" name="portfolio" width="300px">
+          <select id="portfolio" name="portfolio" width="300px" required>
             <option selected disabled value>  </option>
             {% for portfolio in portfolios %}
               <option value="{{ portfolio }}">{{ portfolio }}</option>
@@ -46,13 +46,13 @@
           <select id="ticker" name="ticker" width="300px" required>
             <option disabled selected value>  </option>
             {% for ticker in tickers %}
-              <option value="{{ ticker.ticker }}">{{ ticker.ticker }}</option>
+              <option value="{{ ticker.ticker }}, {{ticker.current_price}}">{{ ticker.ticker }} current price: {{ticker.current_price}}</option>
             {% endfor %}
           </select> <br>
           <label>Shares:</label>
-          <input id="shares" name="shares" type="int" required/>
-          <label>Current price:</label>
-          <input id="currentprice" name="currentprice" type="float" required/>
+          <input id="shares" name="shares" type="int" required pattern="^[0-9]+$"/>
+          <!-- <label>Current price:</label>
+          <input id="currentprice" name="currentprice" type="float"/> -->
           <input id="order" type="radio" name="order" value="buy" required>Buy
           <input id="order" type="radio" name="order" value="sell">Sell<br>
           <input type="submit" value="Execute"/>
@@ -75,7 +75,7 @@
           {% endfor %}
         </select>
         <label>Amount:</label>
-        <input id="amount" name="amount" type="float" required/>
+        <input id="amount" name="amount" type="float" required pattern="^[0-9]+$"/>
         <input id="order" type="radio" name="order" value="In" required> In
         <input id="order" type="radio" name="order" value="Out"> Out<br>
         <input type="submit" value="Transfer"/>

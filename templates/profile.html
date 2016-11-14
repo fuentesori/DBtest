@@ -54,13 +54,13 @@
     </form>
     <br>
     <h3> Add bank account </h3>
-      <form name="newbankaccount" method="post" action='/post_bankaccount2'>
+      <form name="newbankaccount" method="post" action='/post_bankaccount'>
         <label>Bank ABA number:</label>
-        <input id="aba" name="aba" type="text" required/>
+        <input id="aba" name="aba" type="text" required pattern="^(\d{8})$"/>
         <label>Account number:</label>
-        <input id="accountnumber" name="accountnumber" type="text" required/>
+        <input id="accountnumber" name="accountnumber" type="text" required pattern="^(\d{10})$"/>
         <label>Direct deposit?:</label>
-        <select id="directdeposit" name="directdeposit" width="300px" required>
+        <select id="directdeposit" name="directdeposit" width="300px" required/>
           <option selected disabled value>  </option>
             <option value="true">true</option>
             <option value="false">false</option>

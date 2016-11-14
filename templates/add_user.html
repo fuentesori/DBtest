@@ -35,12 +35,12 @@
     <input id="email" name="email" type="text" value="test@example.biz" pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" required/> <br>
     <label>Address:</label>
     <input id="address" name="address" type="text" value="123 Main street" pattern="^[a-zA-Z0-9\s\,\-]+$" required/> <br>
-    <label>Phone:</label>
+    <label>Phone ((XXX)XXX-XXXX)):</label>
     <input id="phone" name="phone" type="text" value="(XXX)XXX-XXXX"pattern="^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$" required/> <br>
-    <label>SSN:</label>
+    <label>SSN (XXX-XX-XXXX):</label>
     <input id="ssn" name="ssn" type="text" value="XXX-XX-XXXX" pattern="^(\d{3}-?\d{2}-?\d{4}|XXX-XX-XXXX)$" required/> <br>
-    <label>Password:</label>
-    <input id="password (only numbers, letters and underscores)" name="password" type="text" value="example" pattern="^[a-zA-Z0-9_]+$" required/> <br>
+    <label>Password (numbers, letters and underscores):</label>
+    <input id="password" name="password" type="text" value="example" pattern="^[a-zA-Z0-9_]+$" required/> <br>
     <input type="submit"/>
     <script type="text/javascript">
 $('#adduser').submit(function()
