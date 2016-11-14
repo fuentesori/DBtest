@@ -86,13 +86,13 @@
             <select id="ticker" name="ticker" width="300px">
               <option disabled selected value>  </option>
               {% for ticker in tickers %}
-                <option value="{{ ticker.ticker }}">{{ ticker.ticker }}</option>
+                <option value="{{ ticker.ticker }}, {{ticker.current_price}}">{{ ticker.ticker }} current price: {{ticker.current_price}}</option>
               {% endfor %}
             </select> <br>
             <label>Shares:</label>
             <input id="shares" name="shares" type="int"/>
-            <label>Current price:</label>
-            <input id="currentprice" name="currentprice" type="float"/>
+            <!-- <label>Current price:</label>
+            <input id="currentprice" name="currentprice" type="float"/> -->
             <input id="order" type="radio" name="order" value="buy">Buy
             <input id="order" type="radio" name="order" value="sell">Sell<br>
             <input type="submit" value="Execute"/>

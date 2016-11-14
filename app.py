@@ -282,16 +282,20 @@ def post_trade():
     for result in cursor:
         userinfo=result
     cursor.close()
-
+    a = []
+    a = request.form['ticker']
+    b = a.rsplit(',', 1)[0]
+    c = float(a.rsplit(',', 1)[1])
+    
     if request.form['order']=='buy':
         shares = int(request.form['shares'])
     else:
         shares = int(request.form['shares'])*-1
-    if (float(shares)*-1*float(request.form['currentprice']) + thiscash) <0:
+    if (float(shares)*-1*float(c) + thiscash) <0:
         return redirect(url_for('insufficientfunds', passuid=uid, portfolioid=request.form['portfolio'], thiscash=thiscash))
 
-    transaction = [stockid, request.form['ticker'], uid, request.form['portfolio'], shares, request.form['currentprice'], tdate]
-    cmd = 'INSERT INTO stock_transactions VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)';
+    transaction = [stockid, b, uid, request.form['portfolio'], shares, c, tdate]
+    cmd = 'INSERT INTO stock_transactions VALUES (%s, %s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (transaction[0], transaction[1], transaction[2], transaction[3], transaction[4], transaction[5], transaction[6]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=int(request.form['portfolio'])))
 
