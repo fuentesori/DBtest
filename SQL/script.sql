@@ -1,4 +1,3 @@
-%%sql
 CREATE TABLE users (
   uid integer,
   fname text not null,

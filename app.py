@@ -14,7 +14,7 @@ uid = 0
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.debug = True
-DATABASEURI = "postgresql://postgres:ok@localhost/4111F"
+DATABASEURI = "postgresql://oif2102:6yh63@104.196.175.120/postgres"#"postgresql://postgres:ok@localhost/4111F"
 engine = create_engine(DATABASEURI)
 
 @app.before_request
@@ -286,7 +286,7 @@ def post_trade():
     a = request.form['ticker']
     b = a.rsplit(',', 1)[0]
     c = float(a.rsplit(',', 1)[1])
-    
+
     if request.form['order']=='buy':
         shares = int(request.form['shares'])
     else:
@@ -489,7 +489,7 @@ if __name__ == "__main__":
   @click.option('--debug', is_flag=True)
   @click.option('--threaded', is_flag=True)
   @click.argument('HOST', default='localhost')
-  @click.argument('PORT', default=5000, type=int)
+  @click.argument('PORT', default=8081, type=int)
   def run(debug, threaded, host, port):
     """
     This function handles command line parameters.
