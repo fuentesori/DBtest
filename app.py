@@ -1,5 +1,6 @@
 import os
 import datetime
+import psycopg2
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask
