@@ -53,7 +53,21 @@
       <input type="submit" value="Delete account"/>
     </form>
     <br>
-
+    <h3> Add bank account </h3>
+      <form name="newbankaccount" method="post" action='/post_bankaccount2'>
+        <label>Bank ABA number:</label>
+        <input id="aba" name="aba" type="text"/>
+        <label>Account number:</label>
+        <input id="accountnumber" name="accountnumber" type="text"/>
+        <label>Direct deposit?:</label>
+        <select id="directdeposit" name="directdeposit" width="300px">
+          <option selected disabled value>  </option>
+            <option value="true">true</option>
+            <option value="false">false</option>
+        </select>
+        <input type="submit" value="Add new bank account"/>
+      </form>
+      <h3> Modify or delete bank account </h3>
     <form name="modifybankaccount" method="post" action='/modify_bankaccount'>
       <label>Account:</label>
       <select id="bankaccountid" name="bankaccountid" width="300px">

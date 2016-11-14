@@ -222,6 +222,25 @@ def post_bankaccount():
     g.conn.execute(cmd, (bankaccount[0], bankaccount[1], bankaccount[2], bankaccount[3], bankaccount[4]));
     return redirect(url_for('portfolio', passuid=uid, portfolioid=Gportfolioid))
 
+#create bank account
+@app.route('/post_bankaccount2', methods=['POST'])
+def post_bankaccount2():
+    if uid == 0:
+        return redirect(url_for('index'))
+    #find biggest primary key id and increment by 1
+    cmd = 'SELECT MAX(bankaccountid) FROM bank_accounts'
+    cursor = g.conn.execute(cmd)
+    for result in cursor:
+        bankaccountid = result[0] + 1
+    cursor.close()
+    bankaccountid = int(bankaccountid)
+    bankaccount = [bankaccountid, request.form['aba'], request.form['accountnumber'], uid, request.form['directdeposit']]
+    print(bankaccount)
+    cmd = 'INSERT INTO bank_accounts VALUES (%s, %s, %s, %s, %s)';
+    g.conn.execute(cmd, (bankaccount[0], bankaccount[1], bankaccount[2], bankaccount[3], bankaccount[4]));
+    return redirect(url_for('profile'))
+
+
 #posting stock trades
 @app.route('/post_trade', methods=['POST'])
 def post_trade():
@@ -382,7 +401,7 @@ def post_user():
     uid = int(uid)
     cursor.close()
     #fill out user data and store in database
-    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password'], request.form['email']]
+    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['email'], request.form['password']]
     cmd = 'INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (users[0], users[1], users[2], users[3], users[4], users[5], users[6], users[7]));
     return redirect(url_for('usercreated', uid=int(uid)))
@@ -426,8 +445,8 @@ def update_user():
     if uid == 0:
         return redirect(url_for('index'))
     #fill out user data and update in database
-    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['password'], request.form['email']]
-    cmd = 'UPDATE users SET (fname, lname, address, phone, ssn, password, email) = (%s, %s, %s, %s, %s, %s, %s) WHERE uid=%s';
+    users = [uid, request.form['fname'], request.form['lname'], request.form['address'], request.form['phone'], request.form['ssn'], request.form['email'], request.form['password']]
+    cmd = 'UPDATE users SET (fname, lname, address, phone, ssn, email, password) = (%s, %s, %s, %s, %s, %s, %s) WHERE uid=%s';
     g.conn.execute(cmd, (users[1], users[2], users[3], users[4], users[5], users[6], users[7], users[0]));
 
     cmd = "SELECT * FROM users where uid=%s"
@@ -439,14 +458,24 @@ def update_user():
     return redirect(url_for('profile'))
 
 #delete user profile
-# @app.route('/delete_user', methods=['POST'])
-# def delete_user():
-#     cmd = 'SELECT uid FROM bank_accounts WHERE uid=%s and direct_deposit = true'
-#     cursor = g.conn.execute(cmd, uid)
-#     for result in cursor:
-#         checkuser = result
-#     cursor.close()
-#     if checkuser == uid
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    cmd = 'SELECT uid FROM bank_accounts WHERE uid=%s and direct_deposit = true'
+    cursor = g.conn.execute(cmd, uid)
+    checkuser = []
+    for result in cursor:
+        checkuser = result[0]
+    cursor.close()
+    if checkuser == uid:
+        cmd = 'DELETE FROM users WHERE uid=%s'
+        g.conn.execute(cmd, uid)
+        return redirect(url_for('index'))
+    return redirect(url_for('cantdelete'))
+
+@app.route('/cannotdelete')
+def cantdelete():
+    return render_template("cantdelete.html")
+
 
 
 if __name__ == "__main__":
