@@ -10,6 +10,16 @@
         max-width: 500px;
         padding-top: 100px;
       }
+
+      /* make the cells output the value of their data-value attribute */
+    td:after {
+      content: attr(data-value);
+    }
+
+    /* hide the output if the data-value is equal to "$0" */
+    td[data-value="$0"]:after {
+      content: "";
+    }
     </style>
 </head>
 <body>
@@ -142,10 +152,10 @@
           {% if transaction.netshares != 0 %}
           <tr>
             <td> {{transaction.ticker}}</td>
-            <td> {{transaction.netshares}}</td>
-            <td> {{transaction.netcost}}</td>
-            <td> {{transaction.current_price}}</td>
-            <td> {{transaction.currentvalue}}</td>
+            <td align="right"> {{'{:,}'.format(transaction.netshares)}}</td>
+            <td align="right"> {{'${:,.2f}'.format(transaction.netcost)}}</td>
+            <td align="right"> {{'${:,.2f}'.format(transaction.current_price)}}</td>
+            <td align="right"> {{'${:,.2f}'.format(transaction.currentvalue)}}</td>
           </tr>
           {% endif %}
           {% endfor %}
@@ -163,7 +173,12 @@
           <th> Current price </th>
         {% for transaction in transactions %}
         {% if transaction.netshares == 0 %}
-          <tr><td> {{transaction.ticker}}</td> <td> {{transaction.netshares}}</td> <td> {{transaction.netcost}}</td><td> {{transaction.current_price}}</td>  </tr>
+          <tr>
+            <td align="right"> {{transaction.ticker}}</td>
+             <td align="right"> {{'{:,}'.format(transaction.netshares)}}</td>
+             <td align="right"> {{'${:,.2f}'.format(transaction.netcost)}}</td>
+             <td align="right"> {{'${:,.2f}'.format(transaction.current_price)}}</td>
+           </tr>
         {% endif %}
         {% endfor %}
         </table>
