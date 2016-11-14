@@ -239,6 +239,7 @@ def post_bankaccount2():
     cmd = 'INSERT INTO bank_accounts VALUES (%s, %s, %s, %s, %s)';
     g.conn.execute(cmd, (bankaccount[0], bankaccount[1], bankaccount[2], bankaccount[3], bankaccount[4]));
     return redirect(url_for('profile'))
+    
 
 
 #posting stock trades
@@ -488,7 +489,7 @@ if __name__ == "__main__":
   @click.command()
   @click.option('--debug', is_flag=True)
   @click.option('--threaded', is_flag=True)
-  @click.argument('HOST', default='0.0.0.0')
+  @click.argument('HOST', default='0.0.0.0') #default='localhost')
   @click.argument('PORT', default=8081, type=int)
   def run(debug, threaded, host, port):
     """
