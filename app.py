@@ -491,7 +491,7 @@ if __name__ == "__main__":
   @click.argument('HOST', default='0.0.0.0')
   @click.argument('PORT', default=8111, type=int)
   def run(debug, threaded, host, port):
-          """
+    """
     This function handles command line parameters.
     Run the server using
         python server.py
@@ -500,7 +500,7 @@ if __name__ == "__main__":
     """
 
     HOST, PORT = host, port
-    print ("running on %s:%d" % (HOST, PORT))
+    print "running on %s:%d" % (HOST, PORT)
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
 
