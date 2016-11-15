@@ -48,8 +48,8 @@
 <table valign="top">
   <tr>
     <td valign="top" width="50%">
-      <form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>'>
-        <select id="portfolio" name="portfolio" width="300px">
+      <form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>' >
+        <select id="portfolio" name="portfolio" width="300px" required>
           <option selected disabled value>  </option>
           {% for portfolio in portfolios %}
             <option value="{{ portfolio }}">{{ portfolio }}</option>
