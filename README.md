@@ -4,17 +4,17 @@ Group Members:
 Oriana Fuentes oif2102
 Harry Munroe jhm2152
 
-Introduction:
-The Personal Stock Portfolio Application allows a user to manage their stock
-portfolios and bank accounts to effectively track and edit their stock
-positions.
+## Introduction:
+Our website offers personal equity investment portfolios for US stocks (NYSE, and NASDAQ). Users can open portfolios and contribute to them with funds from either one or several personal bank accounts. They will be able to view and manage portfolios from an online portal. The website will provide insight into performance of individual and overall portfolios, current stock prices and the ability to buy or short equity. The main entities will be the users and portfolios. Main operations will be contributing or removing cash from portfolios, and buying or selling stock. Cash operations are saved to a table with their respective date, user, funding/drawing bank account and corresponding portfolio. Stock transactions are saved in a table with corresponding date, user, stock ticker, price and amount. Both transaction tables along with a table of US stocks and current prices will be used to calculate updated positions of portfolios: total amount in cash, total amount invested and performance to date.
 
-Functions of the portfolio:
+## Functions of the portfolio:
 Users may either create an account or log in using an existing account. once in
 their account, they may modify their profile details, add or modify their bank
 account information, move money between bank accounts and their portfolios,
 or buy and sell stocks. They may also delete their portfolios, delete bank
 accounts or delete their accounts entirely.
+
+
 
 ## Navigating the Application:
 ### Login:
