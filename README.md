@@ -28,7 +28,7 @@ price and amount. Both transaction tables along with a table of US stocks and
 current prices will be used to calculate updated positions of portfolios: total
 amount in cash, total amount invested and performance to date.
 
-## Functions of the portfolio:
+## Functions of the Portfolio:
 Users may either create an account or log in using an existing account. once in
 their account the following operations are available:
 * Add portfolios
@@ -109,19 +109,19 @@ value of the transaction is over the current funds of the portfolio
 * Verifying whether a specific user has direct deposit set up on at least one of
 their accounts
 
-## Use cases:
+## Use Cases:
 * Log into existing account
 * View portfolio
-* Create Account
+* Create account
 * Log into account
 * Create portfolio
 * Try to buy without funding
 * Fund portfolio
 * Buy stocks
-* Sell Stocks
+* Sell stocks
 * Delete account
 
-## Diferences from proposal:
+## Differences from proposal:
 There are two differences:
 * The cash value of a portfolio is calculated by netting stock purchases and sales
 with cash transactions (in and out from bank accounts) instead of being statically maintained in a table
