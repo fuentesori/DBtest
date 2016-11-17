@@ -1,11 +1,20 @@
+#Columbia - COMS 4111 Introduction to Databases
+
+Project goal is to produce a web application that interacts with a Postgres database
+stored on Google Cloud. The application must allow the user to interact with different
+tables and relations in the database without facing errors, entering SQL code nor
+exposing the database to SQL injections. The following are used:
+
+* Python Flask
+* Postgres
+* SQL
+* HTML
+* CSS
+
 # Personal Stock Portfolio
 
-Group Members:
-Oriana Fuentes oif2102
-Harry Munroe jhm2152
-
 ## Introduction:
-Our website offers personal equity investment portfolios for US stocks (NYSE,
+The website offers personal equity investment portfolios for US stocks (NYSE,
 and NASDAQ). Users can open portfolios and contribute to them with funds from
 either one or several personal bank accounts. They will be able to view and manage
 portfolios from an online portal. The website will provide insight into performance

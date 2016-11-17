@@ -14,7 +14,7 @@ uid = 0
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.debug = True
-DATABASEURI = "postgresql://oif2102:6yh63@104.196.175.120/postgres"#"postgresql://postgres:ok@localhost/4111F"
+DATABASEURI = ""
 engine = create_engine(DATABASEURI)
 
 @app.before_request
